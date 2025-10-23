@@ -7,7 +7,7 @@ class MaterialPoint
     public int v1, v2, v3;
 
 
-
+//длодло
 
     public void SetData(int x, int y, int z)
     {
