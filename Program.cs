@@ -1,6 +1,6 @@
 using System;
 
-class cincle
+class Cincle
 {
     public int x0;
     public int y0;
@@ -28,7 +28,7 @@ class cincle
 }
 
 // Похідний клас — сфера
-class sphere : cincle
+class Sphere : Cincle
 {
     public int z0;
 
@@ -60,37 +60,41 @@ class Program
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-        int choice;
-        cincle baseObj;
-
         Console.WriteLine("Choose an object to work on:");
-        Console.WriteLine("0 - a circle");
-        Console.WriteLine("1 - sphere");
+        Console.WriteLine("0 - Circle");
+        Console.WriteLine("1 - Sphere");
         Console.Write("Your choice: ");
-        choice = Convert.ToInt32(Console.ReadLine());
 
-        if (choice == 0)
+        int userSelect = Convert.ToInt32(Console.ReadLine());
+        Cincle baseObj;
+
+        if (userSelect == 0)
         {
-            baseObj = new cincle();
+            baseObj = new Cincle();
             baseObj.Input(0, 0, 5);
             baseObj.Display();
-            Console.WriteLine($"circle length: {baseObj.Length():F2}");
+            Console.WriteLine($"Circle length: {baseObj.Length():F2}");
         }
-        else if (choice == 1)
+        else if (userSelect == 1)
         {
-            sphere sph = new sphere();
+            Sphere sph = new Sphere();
             sph.Input(0, 0, 10, 5);
             sph.Display();
-            Console.WriteLine($"Surface area of a sphere: {sph.Area():F2}");
+            Console.WriteLine($"Surface area of sphere: {sph.Area():F2}");
         }
         else
         {
             Console.WriteLine("Wrong choice!");
         }
 
+        // Демонстрація динамічного поліморфізму
         Console.WriteLine("\nDemonstration of dynamic polymorphism:");
-        baseObj = new sphere(); // створюємо посилання базового типу на об’єкт похідного класу
-        baseObj.Input(1, 2, 7); // викликається метод базового класу
-        baseObj.Display(); // викликається метод ПЕРЕВИЗНАЧЕНИЙ у похідному класі
+        baseObj = new Sphere();  // створюємо посилання базового типу на об’єкт похідного класу
+
+        // Викликається метод базового класу Input, бо аргументи відповідають саме йому
+        baseObj.Input(1, 2, 7);
+
+        // Викликається перевизначений метод Display у похідному класі Sphere
+        baseObj.Display();
     }
 }
