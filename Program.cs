@@ -1,37 +1,56 @@
 using System;
 
-class MaterialPoint
+class cincle
 {
-    public int x0, y0, z0; // Початкові координати
-    public int v1, v2, v3; // Компоненти швидкості
+    public int x0;
+    public int y0;
+    public int r;
 
-    // Метод для задання початкових координат
-    public void SetData(int x, int y, int z)
+    // Метод для задання значень полів
+    public virtual void Input(int x, int y, int radius)
+    {
+        x0 = x;
+        y0 = y;
+        r = radius;
+    }
+
+    // Віртуальний метод для виведення даних кола
+    public virtual void Display()
+    {
+        Console.WriteLine($"Center: ({x0}, {y0}), Radius: {r}");
+    }
+
+    // Метод для обчислення довжини кола
+    public virtual double Length()
+    {
+        return 2 * Math.PI * r;
+    }
+}
+
+// Похідний клас — сфера
+class sphere : cincle
+{
+    public int z0;
+
+    // Перевизначення методу введення
+    public void Input(int x, int y, int z, int radius)
     {
         x0 = x;
         y0 = y;
         z0 = z;
+        r = radius;
     }
 
-    // Метод для задання швидкості
-    public void SetVelocity(int vx, int vy, int vz)
+    // Перевизначення методу відображення (динамічний поліморфізм)
+    public override void Display()
     {
-        v1 = vx;
-        v2 = vy;
-        v3 = vz;
+        Console.WriteLine($"Center: ({x0}, {y0}, {z0}), Radius: {r}");
     }
 
-    // Метод для обчислення нових координат і перевірки октанта
-    public bool IsInFirstOctant(int t)
+    // Новий метод — обчислення площі поверхні сфери
+    public double Area()
     {
-        int x = x0 + v1 * t;
-        int y = y0 + v2 * t;
-        int z = z0 + v3 * t;
-
-        Console.WriteLine($"New coordinates: ({x}, {y}, {z})");
-
-        // Перевірка, чи потрапляє точка у перший октант
-        return (x > 0 && y > 0 && z > 0);
+        return 4 * Math.PI * r * r;
     }
 }
 
@@ -39,48 +58,39 @@ class Program
 {
     static void Main()
     {
-        Console.Write("Enter count of points: ");
-        int count = Convert.ToInt32(Console.ReadLine());
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-        MaterialPoint[] points = new MaterialPoint[count];
-        int time = 0;
+        int choice;
+        cincle baseObj;
 
-        Console.Write("Enter time t: ");
-        time = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine("Choose an object to work on:");
+        Console.WriteLine("0 - a circle");
+        Console.WriteLine("1 - sphere");
+        Console.Write("Your choice: ");
+        choice = Convert.ToInt32(Console.ReadLine());
 
-        for (int i = 0; i < count; i++)
+        if (choice == 0)
         {
-            points[i] = new MaterialPoint();
-
-            Console.WriteLine($"\nEnter coordinates of point {i + 1}:");
-            Console.Write("x = ");
-            int x = Convert.ToInt32(Console.ReadLine());
-            Console.Write("y = ");
-            int y = Convert.ToInt32(Console.ReadLine());
-            Console.Write("z = ");
-            int z = Convert.ToInt32(Console.ReadLine());
-            points[i].SetData(x, y, z);
-
-            Console.WriteLine($"Enter velocity components of point {i + 1}:");
-            Console.Write("v1 = ");
-            int v1 = Convert.ToInt32(Console.ReadLine());
-            Console.Write("v2 = ");
-            int v2 = Convert.ToInt32(Console.ReadLine());
-            Console.Write("v3 = ");
-            int v3 = Convert.ToInt32(Console.ReadLine());
-            points[i].SetVelocity(v1, v2, v3);
+            baseObj = new cincle();
+            baseObj.Input(0, 0, 5);
+            baseObj.Display();
+            Console.WriteLine($"circle length: {baseObj.Length():F2}");
+        }
+        else if (choice == 1)
+        {
+            sphere sph = new sphere();
+            sph.Input(0, 0, 10, 5);
+            sph.Display();
+            Console.WriteLine($"Surface area of a sphere: {sph.Area():F2}");
+        }
+        else
+        {
+            Console.WriteLine("Wrong choice!");
         }
 
-        int countInFirstOctant = 0;
-        for (int i = 0; i < count; i++)
-        {
-            if (points[i].IsInFirstOctant(time))
-            {
-                countInFirstOctant++;
-                Console.WriteLine($"Point {i + 1} is in the 1st octant.");
-            }
-        }
-
-        Console.WriteLine($"\nCount of points in 1st octant: {countInFirstOctant}");
+        Console.WriteLine("\nDemonstration of dynamic polymorphism:");
+        baseObj = new sphere(); // створюємо посилання базового типу на об’єкт похідного класу
+        baseObj.Input(1, 2, 7); // викликається метод базового класу
+        baseObj.Display(); // викликається метод ПЕРЕВИЗНАЧЕНИЙ у похідному класі
     }
 }
