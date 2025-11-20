@@ -1,100 +1,119 @@
 using System;
 
-class Cincle
+// Абстрактний клас — спільний для всіх фігур
+abstract class Shape
 {
-    public int x0;
-    public int y0;
-    public int r;
+    protected int x0, y0, r;
 
-    // Метод для задання значень полів
-    public virtual void Input(int x, int y, int radius)
+    public Shape(int x, int y, int radius)
     {
         x0 = x;
         y0 = y;
         r = radius;
+        Console.WriteLine("Shape constructor called");
     }
 
-    // Віртуальний метод для виведення даних кола
+    ~Shape()
+    {
+        Console.WriteLine("Shape destructor called");
+    }
+
     public virtual void Display()
     {
         Console.WriteLine($"Center: ({x0}, {y0}), Radius: {r}");
     }
 
-    // Метод для обчислення довжини кола
-    public virtual double Length()
+    // Абстрактний метод — обов’язково переозначати
+    public abstract double Area();
+}
+
+
+
+//  Клас Circle (коло)
+class Circle : Shape
+{
+    public Circle(int x, int y, int radius)
+        : base(x, y, radius)
+    {
+        Console.WriteLine("Circle constructor called");
+    }
+
+    ~Circle()
+    {
+        Console.WriteLine("Circle destructor called");
+    }
+
+    public override double Area()
+    {
+        return Math.PI * r * r;
+    }
+
+    public double Length()
     {
         return 2 * Math.PI * r;
     }
-}
 
-// Похідний клас — сфера
-class Sphere : Cincle
-{
-    public int z0;
-
-    // Перевизначення методу введення
-    public void Input(int x, int y, int z, int radius)
-    {
-        x0 = x;
-        y0 = y;
-        z0 = z;
-        r = radius;
-    }
-
-    // Перевизначення методу відображення (динамічний поліморфізм)
     public override void Display()
     {
-        Console.WriteLine($"Center: ({x0}, {y0}, {z0}), Radius: {r}");
+        Console.WriteLine($"Circle Center: ({x0}, {y0}), Radius: {r}");
+    }
+}
+
+
+
+//  Клас Sphere (сфера)
+class Sphere : Shape
+{
+    protected int z0;
+
+    public Sphere(int x, int y, int z, int radius)
+        : base(x, y, radius)
+    {
+        z0 = z;
+        Console.WriteLine("Sphere constructor called");
     }
 
-    // Новий метод — обчислення площі поверхні сфери
-    public double Area()
+    ~Sphere()
+    {
+        Console.WriteLine("Sphere destructor called");
+    }
+
+    public override double Area()
     {
         return 4 * Math.PI * r * r;
     }
+
+    public override void Display()
+    {
+        Console.WriteLine($"Sphere Center: ({x0}, {y0}, {z0}), Radius: {r}");
+    }
 }
 
+
+
+// 🟣 Демонстрація роботи
 class Program
 {
     static void Main()
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-        Console.WriteLine("Choose an object to work on:");
-        Console.WriteLine("0 - Circle");
-        Console.WriteLine("1 - Sphere");
-        Console.Write("Your choice: ");
+        Shape obj;
 
-        int userSelect = Convert.ToInt32(Console.ReadLine());
-        Cincle baseObj;
+        Console.WriteLine("Choose object: 0 - Circle, 1 - Sphere");
+        int choice = Convert.ToInt32(Console.ReadLine());
 
-        if (userSelect == 0)
+        if (choice == 0)
         {
-            baseObj = new Cincle();
-            baseObj.Input(0, 0, 5);
-            baseObj.Display();
-            Console.WriteLine($"Circle length: {baseObj.Length():F2}");
-        }
-        else if (userSelect == 1)
-        {
-            Sphere sph = new Sphere();
-            sph.Input(0, 0, 10, 5);
-            sph.Display();
-            Console.WriteLine($"Surface area of sphere: {sph.Area():F2}");
+            obj = new Circle(0, 0, 5);
         }
         else
         {
-            Console.WriteLine("Wrong choice!");
+            obj = new Sphere(0, 0, 10, 5);
         }
 
-        // Демонстрація динамічного поліморфізму
-        Console.WriteLine("\nDemonstration of dynamic polymorphism:");
-        baseObj = new Sphere();  // створюємо посилання базового типу на об’єкт похідного класу
-
-        // Викликається метод базового класу Input, бо аргументи відповідають саме йому
-        baseObj.Input(1, 2, 7);
-
-        // Викликається перевизначений метод Display у похідному класі Sphere
-        baseObj.Display();
+        Console.WriteLine("\n--- Object Information ---");
+        obj.Display();
+        Console.WriteLine($"Area: {obj.Area():F2}");
     }
 }
